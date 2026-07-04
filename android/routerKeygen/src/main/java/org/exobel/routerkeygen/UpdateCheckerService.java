@@ -6,7 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import androidx.core.app.NotificationCompat;
 
 import org.exobel.routerkeygen.ui.Preferences;
 import org.json.JSONException;
@@ -99,7 +99,7 @@ public class UpdateCheckerService extends IntentService {
                                     0,
                                     new Intent(Intent.ACTION_VIEW).setData(Uri
                                             .parse(lastVersion.url)),
-                                    PendingIntent.FLAG_ONE_SHOT));
+                                    PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE));
             mNotificationManager.notify(UNIQUE_ID, builder.build());
         }
     }

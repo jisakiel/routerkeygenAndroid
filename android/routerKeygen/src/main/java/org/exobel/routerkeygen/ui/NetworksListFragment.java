@@ -28,7 +28,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.ClipboardManager;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -175,28 +175,26 @@ public class NetworksListFragment extends Fragment implements
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         String value = item.getIntent().getStringExtra(MENU_VALUE);
-        switch (item.getItemId()) {
-            case R.id.copy_ssid: {
-                ClipboardManager clipboard = (ClipboardManager) getActivity()
-                        .getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(value);
-                Toast.makeText(getActivity(),
-                        getString(R.string.msg_copied, value), Toast.LENGTH_SHORT)
-                        .show();
-                return true;
-            }
-            case R.id.copy_mac: {
-                ClipboardManager clipboard = (ClipboardManager) getActivity()
-                        .getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText(value);
-                Toast.makeText(getActivity(),
-                        getString(R.string.msg_copied, value), Toast.LENGTH_SHORT)
-                        .show();
-                return true;
-            }
-            case R.id.use_mac:
-                mCallbacks.onItemSelected(value);
-                return true;
+        int id = item.getItemId();
+        if (id == R.id.copy_ssid) {
+            ClipboardManager clipboard = (ClipboardManager) getActivity()
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(value);
+            Toast.makeText(getActivity(),
+                    getString(R.string.msg_copied, value), Toast.LENGTH_SHORT)
+                    .show();
+            return true;
+        } else if (id == R.id.copy_mac) {
+            ClipboardManager clipboard = (ClipboardManager) getActivity()
+                    .getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(value);
+            Toast.makeText(getActivity(),
+                    getString(R.string.msg_copied, value), Toast.LENGTH_SHORT)
+                    .show();
+            return true;
+        } else if (id == R.id.use_mac) {
+            mCallbacks.onItemSelected(value);
+            return true;
         }
         return super.onContextItemSelected(item);
     }

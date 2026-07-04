@@ -36,10 +36,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -211,29 +211,30 @@ public class NetworksListActivity extends Activity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.manual_input:
-                if (mTwoPane) {
-                    getFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.keygen_fragment,
-                                    ManualInputFragment.newInstance()).commit();
-                } else {
-                    startActivity(new Intent(this, ManualInputActivity.class));
-                }
-            case R.id.wifi_scan:
-                if (!scanPermission) {
-                    Toast.makeText(this, R.string.msg_nolocationpermission, Toast.LENGTH_SHORT)
-                            .show();
-                    return true;
-                }
-                scan();
+        int id = item.getItemId();
+        if (id == R.id.manual_input) {
+            if (mTwoPane) {
+                getFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.keygen_fragment,
+                                ManualInputFragment.newInstance()).commit();
+            } else {
+                startActivity(new Intent(this, ManualInputActivity.class));
+            }
+            return true;
+        } else if (id == R.id.wifi_scan) {
+            if (!scanPermission) {
+                Toast.makeText(this, R.string.msg_nolocationpermission, Toast.LENGTH_SHORT)
+                        .show();
                 return true;
-            case R.id.pref:
-                startActivity(new Intent(this, Preferences.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            }
+            scan();
+            return true;
+        } else if (id == R.id.pref) {
+            startActivity(new Intent(this, Preferences.class));
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 

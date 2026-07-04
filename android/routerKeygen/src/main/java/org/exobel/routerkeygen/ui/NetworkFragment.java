@@ -238,71 +238,71 @@ public class NetworkFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_share:
-                try {
-                    if (passwordList == null)
-                        return true;
-                    Intent i = new Intent(Intent.ACTION_SEND);
-                    i.setType("text/plain");
-                    i.putExtra(Intent.EXTRA_SUBJECT, wifiNetwork.getSsidName()
-                            + getString(R.string.share_msg_begin));
-                    final StringBuilder message = new StringBuilder(
-                            wifiNetwork.getSsidName());
-                    message.append("\n");
-                    message.append(getString(R.string.share_msg_begin));
-                    message.append(":\n");
-                    for (String password : passwordList) {
-                        message.append(password);
-                        message.append('\n');
-                    }
-                    i.putExtra(Intent.EXTRA_TEXT, message.toString());
-                    startActivity(Intent.createChooser(i,
-                            getString(R.string.share_title)));
-                } catch (Exception e) {
-                    Toast.makeText(getActivity(), R.string.msg_err_sendto,
-                            Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            case R.id.menu_save_sd:
-                if (!Environment.getExternalStorageState().equals(
-                        Environment.MEDIA_MOUNTED)) {
-                    Toast.makeText(getActivity(), R.string.msg_nosdcard,
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
+        int id = item.getItemId();
+        if (id == R.id.menu_share) {
+            try {
                 if (passwordList == null)
                     return true;
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, wifiNetwork.getSsidName()
+                        + getString(R.string.share_msg_begin));
                 final StringBuilder message = new StringBuilder(
                         wifiNetwork.getSsidName());
-                message.append(" KEYS\n");
+                message.append("\n");
+                message.append(getString(R.string.share_msg_begin));
+                message.append(":\n");
                 for (String password : passwordList) {
                     message.append(password);
                     message.append('\n');
                 }
-                try {
-                    getPrefs();
-                    final String path = new File(dicFile).getParent();
-                    final BufferedWriter out = new BufferedWriter(new FileWriter(
-                            (path != null ? path
-                                    : Environment.getExternalStorageDirectory())
-                                    + File.separator
-                                    + wifiNetwork.getSsidName()
-                                    + ".txt"));
-                    out.write(message.toString());
-                    out.close();
-                } catch (IOException e) {
-                    Toast.makeText(getActivity(),
-                            getString(R.string.msg_err_saving_key_file),
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                Toast.makeText(
-                        getActivity(),
-                        wifiNetwork.getSsidName() + ".txt "
-                                + getString(R.string.msg_saved_key_file),
+                i.putExtra(Intent.EXTRA_TEXT, message.toString());
+                startActivity(Intent.createChooser(i,
+                        getString(R.string.share_title)));
+            } catch (Exception e) {
+                Toast.makeText(getActivity(), R.string.msg_err_sendto,
+                        Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        } else if (id == R.id.menu_save_sd) {
+            if (!Environment.getExternalStorageState().equals(
+                    Environment.MEDIA_MOUNTED)) {
+                Toast.makeText(getActivity(), R.string.msg_nosdcard,
                         Toast.LENGTH_SHORT).show();
                 return true;
+            }
+            if (passwordList == null)
+                return true;
+            final StringBuilder message = new StringBuilder(
+                    wifiNetwork.getSsidName());
+            message.append(" KEYS\n");
+            for (String password : passwordList) {
+                message.append(password);
+                message.append('\n');
+            }
+            try {
+                getPrefs();
+                final String path = new File(dicFile).getParent();
+                final BufferedWriter out = new BufferedWriter(new FileWriter(
+                        (path != null ? path
+                                : Environment.getExternalStorageDirectory())
+                                + File.separator
+                                + wifiNetwork.getSsidName()
+                                + ".txt"));
+                out.write(message.toString());
+                out.close();
+            } catch (IOException e) {
+                Toast.makeText(getActivity(),
+                        getString(R.string.msg_err_saving_key_file),
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            Toast.makeText(
+                    getActivity(),
+                    wifiNetwork.getSsidName() + ".txt "
+                            + getString(R.string.msg_saved_key_file),
+                    Toast.LENGTH_SHORT).show();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

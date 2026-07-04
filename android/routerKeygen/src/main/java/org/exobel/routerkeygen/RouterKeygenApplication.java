@@ -12,17 +12,14 @@ import com.millennialmedia.MMSDK;
 import com.millennialmedia.UserData;
 
 import org.acra.ACRA;
+import org.acra.config.ACRAConfiguration;
+import org.acra.config.ConfigurationBuilder;
 import org.acra.ReportField;
 import org.acra.ReportingInteractionMode;
-import org.acra.annotation.ReportsCrashes;
 import org.exobel.routerkeygen.ui.NetworkActivity;
 import org.exobel.routerkeygen.ui.NetworksListActivity;
 import org.exobel.routerkeygen.ui.Preferences;
 
-@ReportsCrashes(mailTo = "exobel@gmail.com", customReportContent = {
-        ReportField.APP_VERSION_NAME, ReportField.ANDROID_VERSION,
-        ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA,
-        ReportField.STACK_TRACE, ReportField.LOGCAT}, mode = ReportingInteractionMode.TOAST, resToastText = R.string.crash_toast_text)
 public class RouterKeygenApplication extends Application {
 
     private Tracker mTracker;
@@ -36,7 +33,7 @@ public class RouterKeygenApplication extends Application {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
             // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
             mTracker = analytics.newTracker(R.xml.analytics);
-            mTracker.enableAdvertisingIdCollection(true);
+            mTracker.enableAdvertisingIdCollection(false);
         }
         return mTracker;
     }
@@ -46,7 +43,17 @@ public class RouterKeygenApplication extends Application {
     public void onCreate() {
         super.onCreate();
         try {
-            ACRA.init(this);
+            final ACRAConfiguration config = new ConfigurationBuilder(this)
+                    .setMailTo("jisakiel@gmail.com")
+                    .setCustomReportContent(new ReportField[]{
+                            ReportField.APP_VERSION_NAME, ReportField.ANDROID_VERSION,
+                            ReportField.PHONE_MODEL, ReportField.CUSTOM_DATA,
+                            ReportField.STACK_TRACE, ReportField.LOGCAT
+                    })
+                    .setReportingInteractionMode(ReportingInteractionMode.TOAST)
+                    .setResToastText(R.string.crash_toast_text)
+                    .build();
+            ACRA.init(this, config);
         } catch (Exception e) {
             e.printStackTrace();
         }
