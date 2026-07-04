@@ -40,13 +40,22 @@ import java.util.TreeSet;
 import java.util.zip.ZipInputStream;
 
 public class WifiScanReceiver extends BroadcastReceiver {
+    public interface OnScanUnregisteredListener {
+        void onScanUnregistered();
+    }
+
     final private OnScanListener[] scanListeners;
     final private WifiManager wifi;
     private KeygenMatcherTask task;
+    private OnScanUnregisteredListener unregisteredListener;
 
     public WifiScanReceiver(WifiManager wifi, OnScanListener... scanListener) {
         this.scanListeners = scanListener;
         this.wifi = wifi;
+    }
+
+    public void setUnregisteredListener(OnScanUnregisteredListener unregisteredListener) {
+        this.unregisteredListener = unregisteredListener;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -67,6 +76,9 @@ public class WifiScanReceiver extends BroadcastReceiver {
             try {
                 // Single scan
                 context.unregisterReceiver(this);
+                if (unregisteredListener != null) {
+                    unregisteredListener.onScanUnregistered();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

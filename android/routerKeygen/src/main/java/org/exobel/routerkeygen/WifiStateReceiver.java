@@ -27,12 +27,21 @@ import org.exobel.routerkeygen.ui.MessagePublisher;
 
 public class WifiStateReceiver extends BroadcastReceiver {
 
+    public interface OnWifiStateListener {
+        void onWifiStateUnregistered();
+    }
+
     private final WifiManager wifi;
     private final MessagePublisher messagePublisher;
+    private OnWifiStateListener listener;
 
     public WifiStateReceiver(WifiManager wifi, MessagePublisher messagePublisher) {
         this.wifi = wifi;
         this.messagePublisher = messagePublisher;
+    }
+
+    public void setListener(OnWifiStateListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -41,6 +50,9 @@ public class WifiStateReceiver extends BroadcastReceiver {
             wifi.startScan();
             try {
                 context.unregisterReceiver(this);
+                if (listener != null) {
+                    listener.onWifiStateUnregistered();
+                }
             } catch (Exception e) {
             }
 

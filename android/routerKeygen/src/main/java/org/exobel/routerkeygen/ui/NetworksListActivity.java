@@ -95,6 +95,8 @@ public class NetworksListActivity extends Activity implements
         }
     };
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean mScanFinishedRegistered = false;
+    private boolean mStateChangedRegistered = false;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
@@ -114,7 +116,9 @@ public class NetworksListActivity extends Activity implements
         wifiState = wifi.getWifiState() == WifiManager.WIFI_STATE_ENABLED
                 || wifi.getWifiState() == WifiManager.WIFI_STATE_ENABLING;
         scanFinished = new WifiScanReceiver(wifi, networkListFragment, this);
+        ((WifiScanReceiver) scanFinished).setUnregisteredListener(() -> mScanFinishedRegistered = false);
         stateChanged = new WifiStateReceiver(wifi, networkListFragment);
+        ((WifiStateReceiver) stateChanged).setListener(() -> mStateChangedRegistered = false);
 
         final SharedPreferences mPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
@@ -312,15 +316,21 @@ public class NetworksListActivity extends Activity implements
         try {
             //Stop the analytics tracking
             GoogleAnalytics.getInstance(this).reportActivityStop(this);
-            unregisterReceiver(scanFinished);
+            if (mScanFinishedRegistered) {
+                unregisterReceiver(scanFinished);
+                mScanFinishedRegistered = false;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            // Should not happen with the flag, but catch anyway
         }
 
         try {
-            unregisterReceiver(stateChanged);
+            if (mStateChangedRegistered) {
+                unregisterReceiver(stateChanged);
+                mStateChangedRegistered = false;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            // Should not happen
         }
     }
 
@@ -386,11 +396,17 @@ public class NetworksListActivity extends Activity implements
         if (!scanPermission) {
             return;
         }
-        registerReceiver(scanFinished, new IntentFilter(
-                WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        if (!mScanFinishedRegistered) {
+            registerReceiver(scanFinished, new IntentFilter(
+                    WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+            mScanFinishedRegistered = true;
+        }
         if (wifi.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
-            registerReceiver(stateChanged, new IntentFilter(
-                    WifiManager.WIFI_STATE_CHANGED_ACTION));
+            if (!mStateChangedRegistered) {
+                registerReceiver(stateChanged, new IntentFilter(
+                        WifiManager.WIFI_STATE_CHANGED_ACTION));
+                mStateChangedRegistered = true;
+            }
             Toast.makeText(this, R.string.msg_wifienabling, Toast.LENGTH_SHORT)
                     .show();
         } else {
