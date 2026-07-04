@@ -3,17 +3,23 @@ plugins {
 }
 
 android {
+    namespace 'com.ipaulpro.afilechooser'
     compileSdk 36
 
     defaultConfig {
         minSdk 28
-        targetSdk 36
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
         }
+    }
+    lint {
+        targetSdk 36
+    }
+    testOptions {
+        targetSdk 36
     }
 }
