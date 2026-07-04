@@ -17,11 +17,11 @@ ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
     LOCAL_SRC_FILES := sha/sha1-armv8.S
 endif
 ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_CFLAGS :=$(LOCAL_CFLAGS) -march=i686 -mtune=intel -mssse3 -mfpmath=sse -m32
+    LOCAL_CFLAGS :=$(LOCAL_CFLAGS) -march=i686 -mssse3 -mfpmath=sse -m32
     LOCAL_SRC_FILES := sha/sha1-586.S
 endif
 ifeq ($(TARGET_ARCH_ABI),x86_64)
-    LOCAL_CFLAGS :=$(LOCAL_CFLAGS) -fno-integrated-as -march=x86-64 -msse4.2 -mpopcnt -m64 -mtune=intel
+    LOCAL_CFLAGS :=$(LOCAL_CFLAGS) -fno-integrated-as -march=x86-64 -msse4.2 -mpopcnt -m64
     LOCAL_SRC_FILES := sha/sha1-x86_64.S
 endif
 

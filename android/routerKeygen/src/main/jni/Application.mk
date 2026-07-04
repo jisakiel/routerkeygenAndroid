@@ -1,2 +1,3 @@
-APP_PLATFORM := android-16
+APP_PLATFORM := android-28
 APP_OPTIM    := release
+APP_STL      := c++_static
