@@ -35,7 +35,7 @@ import java.util.List;
  * @author paulburke (ipaulpro)
  */
 public class FileListFragment extends ListFragment implements
-        LoaderManager.LoaderCallbacks<List<File>> {
+        LoaderManager.LoaderCallbacks<List<FileItem>> {
 
     private static final int LOADER_ID = 0;
     private FileListAdapter mAdapter;
@@ -94,19 +94,19 @@ public class FileListFragment extends ListFragment implements
     public void onListItemClick(ListView l, View v, int position, long id) {
         FileListAdapter adapter = (FileListAdapter) l.getAdapter();
         if (adapter != null) {
-            File file = adapter.getItem(position);
-            mPath = file.getAbsolutePath();
-            mListener.onFileSelected(file);
+            FileItem item = adapter.getItem(position);
+            mPath = item.file.getAbsolutePath();
+            mListener.onFileSelected(item.file);
         }
     }
 
     @Override
-    public Loader<List<File>> onCreateLoader(int id, Bundle args) {
+    public Loader<List<FileItem>> onCreateLoader(int id, Bundle args) {
         return new FileLoader(getActivity(), mPath);
     }
 
     @Override
-    public void onLoadFinished(Loader<List<File>> loader, List<File> data) {
+    public void onLoadFinished(Loader<List<FileItem>> loader, List<FileItem> data) {
         mAdapter.setListItems(data);
 
         if (isResumed())
@@ -116,7 +116,7 @@ public class FileListFragment extends ListFragment implements
     }
 
     @Override
-    public void onLoaderReset(Loader<List<File>> loader) {
+    public void onLoaderReset(Loader<List<FileItem>> loader) {
         mAdapter.clear();
     }
 

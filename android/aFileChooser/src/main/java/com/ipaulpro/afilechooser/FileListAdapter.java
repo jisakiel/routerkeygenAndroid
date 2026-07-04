@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,23 +39,23 @@ class FileListAdapter extends BaseAdapter {
 
     private final LayoutInflater mInflater;
 
-    private List<File> mData = new ArrayList<>();
+    private List<FileItem> mData = new ArrayList<>();
 
     public FileListAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
     }
 
-    public void add(File file) {
+    public void add(FileItem file) {
         mData.add(file);
         notifyDataSetChanged();
     }
 
-    public void remove(File file) {
+    public void remove(FileItem file) {
         mData.remove(file);
         notifyDataSetChanged();
     }
 
-    public void insert(File file, int index) {
+    public void insert(FileItem file, int index) {
         mData.add(index, file);
         notifyDataSetChanged();
     }
@@ -67,7 +66,7 @@ class FileListAdapter extends BaseAdapter {
     }
 
     @Override
-    public File getItem(int position) {
+    public FileItem getItem(int position) {
         return mData.get(position);
     }
 
@@ -81,7 +80,7 @@ class FileListAdapter extends BaseAdapter {
         return mData.size();
     }
 
-    public List<File> getListItems() {
+    public List<FileItem> getListItems() {
         return mData;
     }
 
@@ -91,7 +90,7 @@ class FileListAdapter extends BaseAdapter {
      *
      * @param data
      */
-    public void setListItems(List<File> data) {
+    public void setListItems(List<FileItem> data) {
         mData = data;
         notifyDataSetChanged();
     }
@@ -105,14 +104,14 @@ class FileListAdapter extends BaseAdapter {
 
         TextView view = (TextView) row;
 
-        // Get the file at the current position
-        final File file = getItem(position);
+        // Get the file item at the current position
+        final FileItem item = getItem(position);
 
         // Set the TextView as the file name
-        view.setText(file.getName());
+        view.setText(item.file.getName());
 
         // If the item is not a directory, use the file icon
-        int icon = file.isDirectory() ? ICON_FOLDER : ICON_FILE;
+        int icon = item.isDirectory ? ICON_FOLDER : ICON_FILE;
         view.setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
 
         return row;

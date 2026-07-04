@@ -7,9 +7,6 @@ import android.os.StrictMode;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
-import com.millennialmedia.AppInfo;
-import com.millennialmedia.MMSDK;
-import com.millennialmedia.UserData;
 
 import org.acra.ACRA;
 import org.acra.config.ACRAConfiguration;
@@ -54,17 +51,6 @@ public class RouterKeygenApplication extends Application {
                     .setResToastText(R.string.crash_toast_text)
                     .build();
             ACRA.init(this, config);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            MMSDK.initialize(this);
-            AppInfo appInfo = new AppInfo();
-            appInfo.setSiteId("8a8094180153530ea48c1a2d528b0066");
-            MMSDK.setAppInfo(appInfo);
-            UserData userData = new UserData().
-                    setEthnicity(UserData.Ethnicity.HISPANIC);
-            MMSDK.setUserData(userData);
         } catch (Exception e) {
             e.printStackTrace();
         }

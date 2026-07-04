@@ -25,7 +25,6 @@ import com.ipaulpro.afilechooser.utils.FileUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +33,7 @@ import java.util.List;
  * @version 2013-12-11
  * @author paulburke (ipaulpro)
  */
-class FileLoader extends AsyncTaskLoader<List<File>> {
+class FileLoader extends AsyncTaskLoader<List<FileItem>> {
 
 	private static final int FILE_OBSERVER_MASK = FileObserver.CREATE
 			| FileObserver.DELETE | FileObserver.DELETE_SELF
@@ -43,7 +42,7 @@ class FileLoader extends AsyncTaskLoader<List<File>> {
 
 	private FileObserver mFileObserver;
 
-	private List<File> mData;
+	private List<FileItem> mData;
 	private final String mPath;
 
 	public FileLoader(Context context, String path) {
@@ -52,9 +51,9 @@ class FileLoader extends AsyncTaskLoader<List<File>> {
 	}
 
 	@Override
-	public List<File> loadInBackground() {
+	public List<FileItem> loadInBackground() {
 
-        ArrayList<File> list = new ArrayList<>();
+        ArrayList<FileItem> list = new ArrayList<>();
 
         // Current directory File instance
         final File pathDir = new File(mPath);
@@ -65,7 +64,9 @@ class FileLoader extends AsyncTaskLoader<List<File>> {
             // Sort the folders alphabetically
             Arrays.sort(dirs, FileUtils.sComparator);
             // Add each folder to the File list for the list adapter
-			Collections.addAll(list, dirs);
+            for (File dir : dirs) {
+                list.add(new FileItem(dir, true));
+            }
         }
 
         // List file in this directory with the file filter
@@ -74,20 +75,22 @@ class FileLoader extends AsyncTaskLoader<List<File>> {
             // Sort the files alphabetically
             Arrays.sort(files, FileUtils.sComparator);
             // Add each file to the File list for the list adapter
-			Collections.addAll(list, files);
+            for (File file : files) {
+                list.add(new FileItem(file, false));
+            }
         }
 
         return list;
 	}
 
 	@Override
-	public void deliverResult(List<File> data) {
+	public void deliverResult(List<FileItem> data) {
 		if (isReset()) {
 			onReleaseResources(data);
 			return;
 		}
 
-		List<File> oldData = mData;
+		List<FileItem> oldData = mData;
 		mData = data;
 
 		if (isStarted())
@@ -132,13 +135,13 @@ class FileLoader extends AsyncTaskLoader<List<File>> {
 	}
 
 	@Override
-	public void onCanceled(List<File> data) {
+	public void onCanceled(List<FileItem> data) {
 		super.onCanceled(data);
 
 		onReleaseResources(data);
 	}
 
-	private void onReleaseResources(List<File> data) {
+	private void onReleaseResources(List<FileItem> data) {
 
 		if (mFileObserver != null) {
 			mFileObserver.stopWatching();

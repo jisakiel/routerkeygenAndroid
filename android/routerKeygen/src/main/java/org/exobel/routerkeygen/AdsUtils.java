@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 
+import com.millennialmedia.AppInfo;
 import com.millennialmedia.InterstitialAd;
 import com.millennialmedia.MMSDK;
 import com.millennialmedia.InlineAd;
 import com.millennialmedia.MMException;
+import com.millennialmedia.UserData;
 
 import java.lang.ref.WeakReference;
 
@@ -30,10 +32,31 @@ public class AdsUtils {
     private static final String STARTUP_LAST_SHOWN_COUNT = "STARTUP_LAST_SHOWN_COUNT";
     private static final int COUNTER_LIMIT = 5;
 
+    private static boolean sInitialized = false;
+
     private AdsUtils() {
     }
 
+    private synchronized static void initializeSdk(Activity activity) {
+        if (sInitialized) {
+            return;
+        }
+        try {
+            MMSDK.initialize(activity);
+            AppInfo appInfo = new AppInfo();
+            appInfo.setSiteId("8a8094180153530ea48c1a2d528b0066");
+            MMSDK.setAppInfo(appInfo);
+            UserData userData = new UserData().
+                    setEthnicity(UserData.Ethnicity.HISPANIC);
+            MMSDK.setUserData(userData);
+            sInitialized = true;
+        } catch (Exception e) {
+            Log.e("AdsUtils", "Error initializing MMSDK", e);
+        }
+    }
+
     public static void loadAdIfNeeded(final Activity activity) {
+        initializeSdk(activity);
         final String TAG = activity.getLocalClassName();
         final RelativeLayout adRelativeLayout = activity
                 .findViewById(R.id.adBannerRelativeLayout);
@@ -120,6 +143,7 @@ public class AdsUtils {
 
     private static void displayInterstitial(final Activity activity,
                                             final String apid, final String countKey, final String timeKey) {
+        initializeSdk(activity);
         final String TAG = activity.getLocalClassName();
         if (checkDonation(activity)) {
             return; // NO ADS!

@@ -15,6 +15,7 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 endif
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
     LOCAL_SRC_FILES := sha/sha1-armv8.S
+    LOCAL_LDFLAGS := -Wl,-Bsymbolic
 endif
 ifeq ($(TARGET_ARCH_ABI),x86)
     LOCAL_CFLAGS :=$(LOCAL_CFLAGS) -march=i686 -mssse3 -mfpmath=sse -m32
