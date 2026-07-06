@@ -19,6 +19,7 @@
 package org.exobel.routerkeygen;
 
 import android.os.Environment;
+import android.net.TrafficStats;
 import android.os.Handler;
 import android.os.Message;
 
@@ -51,6 +52,7 @@ class Downloader extends Thread {
         byte[] buf;
         try {
 
+            TrafficStats.setThreadStatsTag(0xBEEF);
             con = new URL(urlDownload).openConnection();
             myDicFile = new File(Environment.getExternalStorageDirectory()
                     .getPath() + File.separator + "DicTemp.dic");
@@ -102,6 +104,8 @@ class Downloader extends Thread {
             messHand.sendEmptyMessage(0);
         } catch (Exception e) {
             messHand.sendEmptyMessage(-1);
+        } finally {
+            TrafficStats.clearThreadStatsTag();
         }
     }
 

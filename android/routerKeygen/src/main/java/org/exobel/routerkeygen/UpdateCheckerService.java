@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.TrafficStats;
 import androidx.core.app.NotificationCompat;
 
 import org.exobel.routerkeygen.ui.Preferences;
@@ -53,6 +54,7 @@ public class UpdateCheckerService extends IntentService {
             int read;
             String jsonAsString = "";
 
+            TrafficStats.setThreadStatsTag(0xBEEF);
             inputStream = url.openStream();
 
             do {
@@ -67,6 +69,7 @@ public class UpdateCheckerService extends IntentService {
             e.printStackTrace();
             return null;
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (inputStream != null)
                 try {
                     inputStream.close();

@@ -19,6 +19,7 @@
 package org.exobel.routerkeygen.algorithms;
 
 import android.os.Parcel;
+import android.net.TrafficStats;
 
 import org.exobel.routerkeygen.R;
 import org.exobel.routerkeygen.utils.dns.DNSQuery;
@@ -70,7 +71,13 @@ public class AlcatelLucentKeygen extends Keygen {
         DNSQuery dnsquery = new DNSQuery(getMacAddress(), 255, 1);
         DatagramSocket datagramsocket = null;
         try {
+            TrafficStats.setThreadStatsTag(0xBEEF);
             datagramsocket = new DatagramSocket();
+            try {
+                TrafficStats.tagDatagramSocket(datagramsocket);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             datagramsocket.setSoTimeout(5000);
             int i = 0;
             boolean noReply = false;
@@ -92,7 +99,13 @@ public class AlcatelLucentKeygen extends Keygen {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (datagramsocket != null ){
+                try {
+                    TrafficStats.untagDatagramSocket(datagramsocket);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 datagramsocket.close();
             }
         }

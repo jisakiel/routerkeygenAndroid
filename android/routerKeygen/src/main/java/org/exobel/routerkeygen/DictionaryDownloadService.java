@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
+import android.net.TrafficStats;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
@@ -88,6 +89,7 @@ public class DictionaryDownloadService extends IntentService {
 
             final String urlDownload = intent.getStringExtra(URL_DOWNLOAD);
 
+            TrafficStats.setThreadStatsTag(0xBEEF);
             con = (HttpURLConnection) new URL(urlDownload).openConnection();
 
             myProgress = 0;
@@ -237,6 +239,7 @@ public class DictionaryDownloadService extends IntentService {
             cancelNotification = false;
             e.printStackTrace();
         } finally {
+            TrafficStats.clearThreadStatsTag();
             if (fos != null)
                 try {
                     fos.close();

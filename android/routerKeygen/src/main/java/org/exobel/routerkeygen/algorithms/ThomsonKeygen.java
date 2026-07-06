@@ -19,6 +19,7 @@
 package org.exobel.routerkeygen.algorithms;
 
 import android.os.Parcel;
+import android.net.TrafficStats;
 import android.os.Parcelable;
 
 import org.exobel.routerkeygen.R;
@@ -190,6 +191,7 @@ public class ThomsonKeygen extends Keygen {
 				length = 2000;
 			}
 			final URL url = new URL(Preferences.PUB_DOWNLOAD);
+			TrafficStats.setThreadStatsTag(0xBEEF);
 			URLConnection con = url.openConnection();
 			con.setRequestProperty("Range", "bytes=" + totalOffset + "-"
 					+ (totalOffset + length));
@@ -210,6 +212,8 @@ public class ThomsonKeygen extends Keygen {
 			setErrorCode(R.string.msg_err_webdic_table);
 			errorDict = true;
 			return false;
+		} finally {
+			TrafficStats.clearThreadStatsTag();
 		}
 	}
 

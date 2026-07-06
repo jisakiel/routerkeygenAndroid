@@ -35,6 +35,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.TrafficStats;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -421,6 +422,7 @@ public class Preferences extends PreferenceActivity {
                     // Comparing this version with the online
                     // version
                     try {
+                        TrafficStats.setThreadStatsTag(0xBEEF);
                         HttpURLConnection con = (HttpURLConnection) new URL(
                                 PUB_DIC_CFV).openConnection();
                         DataInputStream dis = new DataInputStream(
@@ -471,6 +473,8 @@ public class Preferences extends PreferenceActivity {
                         return ERROR_NETWORK;
                     } catch (Exception e) {
                         return ERROR;
+                    } finally {
+                        TrafficStats.clearThreadStatsTag();
                     }
                 }
 
